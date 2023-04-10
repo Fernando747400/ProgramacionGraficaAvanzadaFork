@@ -64,7 +64,7 @@ int main()
     // Load texture data from file
     int widthTx, heightTx, numCol;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char* bytes = stbi_load("Rubik.jpg", &widthTx, &heightTx, &numCol, 0);
+    unsigned char* bytes = stbi_load("Kirbo.jpg", &widthTx, &heightTx, &numCol, 0);
 
     // Print texture information
     std::cout << widthTx << std::endl;
