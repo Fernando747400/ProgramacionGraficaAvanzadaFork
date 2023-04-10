@@ -100,7 +100,7 @@ int main()
 
     GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
     GLuint tex0uni = glGetUniformLocation(shaderProgram.ID, "tex0");
-    GLuint texOffset = glGetUniformLocation(shaderProgram.ID, "offset");
+    GLuint timeUni = glGetUniformLocation(shaderProgram.ID, "time");
 
     shaderProgram.Activate();
     glUniform1i(tex0uni, 0);
@@ -110,21 +110,13 @@ int main()
         glBindTexture(GL_TEXTURE_2D, texture);
         float timeValue = glfwGetTime();
 
-        // Calculate the texture offset values based on a circular path
-        float radius = 0.5f;
-        float offset_x = radius * cos(timeValue);
-        float offset_y = radius * sin(timeValue);
-
-        // Set the value of the uniform vec2 for the texture offset using glUniform2f or similar
-        glUniform2f(texOffset, offset_x, offset_y);
-
-        // Establecer el valor del uniform sampler2D para la textura usando texUnit del objeto Texture correspondiente
-        glUniform1i(tex0uni, 0);
+        // Set the value of the uniform float for time using glUniform1f or similar
+        glUniform1f(timeUni, timeValue);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Dibujar la geometría con la animación de texturas UV aplicada
+        // Dibujar la geometría con la textura animada con ruido de Perlin aplicado
         shaderProgram.Activate();
         glUniform1f(uniID, 0.5f);
         VAO1.Bind();
@@ -134,6 +126,8 @@ int main()
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+
 
     // Deletes the vertex array object, vertex buffer object, and element buffer object
     VAO1.Delete();
