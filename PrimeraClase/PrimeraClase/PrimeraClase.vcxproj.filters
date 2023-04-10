@@ -84,5 +84,8 @@
     <Image Include="Wood.jpg">
       <Filter>Archivos de recursos\Textures</Filter>
     </Image>
+    <Image Include="SadCat.jpg">
+      <Filter>Archivos de recursos\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

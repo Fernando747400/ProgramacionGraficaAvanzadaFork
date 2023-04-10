@@ -18,18 +18,18 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Create a window object
-    GLFWwindow* window = glfwCreateWindow(950, 950, "test", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1000, 1000, "test", NULL, NULL);
 
     // Set the current time of GLFW to 0
     glfwSetTime(0);
 
     // Define the vertices of a square
     GLfloat squareVertices[] =
-    { // COORDINATES       / COLORS              / TexCoord      / NORMALS             / TANGENTS            / BITANGENTS //
-    -0.5f, -0.5f, 0.0f,    0.0f, 0.0f, 0.0f,     0.0f, 0.0f,     1.0f, 1.0f, 1.0f,     1.0f, 1.0f, 1.0f,     1.0f, 1.0f, 1.0f, // Lower left corner
-    -0.5f, 0.5f, 0.0f,     0.0f, 0.0f, 0.0f,     0.0f, 1.0f,     1.0f, 1.0f, 1.0f,     1.0f, 1.0f, 1.0f,     1.0f, 1.0f, 1.0f, // Upper left corner
-    0.5f, 0.5f, 0.0f,      0.0f, 0.0f, 0.0f,     1.0f, 1.0f,     1.0f, 1.0f, 1.0f,     1.0f, 1.0f, 1.0f,     1.0f, 1.0f, 1.0f, // Upper right corner
-    0.5f, -0.5f, 0.0f,     0.0f, 0.0f, 0.0f,     1.0f, 0.0f,     1.0f, 1.0f, 1.0f,     1.0f, 1.0f, 1.0f,     1.0f, 1.0f, 1.0f, // Lower right corner
+    { //     COORDINATES     /        COLORS      /   TexCoord  //
+    -0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f,    0.0f, 0.0f, // Lower left corner
+    -0.5f,  0.5f, 0.0f,     0.0f, 1.0f, 0.0f,    0.0f, 1.0f, // Upper left corner
+     0.5f,  0.5f, 0.0f,     0.0f, 0.0f, 1.0f,    1.0f, 1.0f, // Upper right corner
+     0.5f, -0.5f, 0.0f,     1.0f, 1.0f, 1.0f,    1.0f, 0.0f  // Lower right corner
     };
 
     // Define the indices that make up the square
@@ -64,7 +64,7 @@ int main()
     // Load texture data from file
     int widthTx, heightTx, numCol;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char* bytes = stbi_load("Kirbo.jpg", &widthTx, &heightTx, &numCol, 0);
+    unsigned char* bytes = stbi_load("SadCat.jpg", &widthTx, &heightTx, &numCol, 0);
 
     // Print texture information
     std::cout << widthTx << std::endl;
@@ -90,63 +90,48 @@ int main()
     VBO VBO1(squareVertices, sizeof(squareVertices));
     EBO EBO1(squareIndices, sizeof(squareIndices));
 
-    // Link VBO data to VAO attributes
-    VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 17 * sizeof(float), (void*)0);
-    VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 17 * sizeof(float), (void*)(3 * sizeof(float)));
-    VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 17 * sizeof(float), (void*)(6 * sizeof(float)));
-    VAO1.LinkAttrib(VBO1, 3, 3, GL_FLOAT, 17 * sizeof(float), (void*)(8 * sizeof(float)));
-    VAO1.LinkAttrib(VBO1, 4, 3, GL_FLOAT, 17 * sizeof(float), (void*)(11 * sizeof(float)));
-    VAO1.LinkAttrib(VBO1, 5, 3, GL_FLOAT, 17 * sizeof(float), (void*)(14 * sizeof(float)));
+    VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+    VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
-    // Unbind VAO, VBO, and EBO
     VAO1.Unbind();
     VBO1.Unbind();
     EBO1.Unbind();
 
-    // Get uniform locations from shader program
     GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
-    GLuint pScale = glGetUniformLocation(shaderProgram.ID, "parallaxScale");
-    GLuint texD = glGetUniformLocation(shaderProgram.ID, "texDiffuse");
-    GLuint texH = glGetUniformLocation(shaderProgram.ID, "texHeight");
-    GLuint texN = glGetUniformLocation(shaderProgram.ID, "texNormal");
+    GLuint tex0uni = glGetUniformLocation(shaderProgram.ID, "tex0");
+    GLuint texOffset = glGetUniformLocation(shaderProgram.ID, "offset");
 
-    // Activate shader program and set texture uniforms
     shaderProgram.Activate();
-    glUniform1i(texD, 0);
-    glUniform1i(texH, 0);
-    glUniform1i(texN, 0);
+    glUniform1i(tex0uni, 0);
 
     while (!glfwWindowShouldClose(window))
     {
-        // Binds the texture to be used
         glBindTexture(GL_TEXTURE_2D, texture);
+        float timeValue = glfwGetTime();
 
-        // Clears the color buffer with a black color
+        // Calculate the texture offset values based on a circular path
+        float radius = 0.5f;
+        float offset_x = radius * cos(timeValue);
+        float offset_y = radius * sin(timeValue);
+
+        // Set the value of the uniform vec2 for the texture offset using glUniform2f or similar
+        glUniform2f(texOffset, offset_x, offset_y);
+
+        // Establecer el valor del uniform sampler2D para la textura usando texUnit del objeto Texture correspondiente
+        glUniform1i(tex0uni, 0);
+
         glClearColor(0.0f, 0.0f, 0.0f, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // Calculates the scale factor for parallax effect based on time
-        float pS = sin(glfwGetTime()) * 1.0f + 3.0f;
-
-        // Activates the shader program
+        // Dibujar la geometría con la animación de texturas UV aplicada
         shaderProgram.Activate();
-
-        // Sets the value of the "scale" uniform variable to 0.5
         glUniform1f(uniID, 0.5f);
-
-        // Sets the value of the "parallaxScale" uniform variable to pS
-        glUniform1f(pScale, pS);
-
-        // Binds the vertex array object
         VAO1.Bind();
-
-        // Draws the elements of the vertex array object using the shader program
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        // Swaps the front and back buffers of the window
+        // Intercambiar buffers y manejar eventos
         glfwSwapBuffers(window);
-
-        // Processes events from the window
         glfwPollEvents();
     }
 
@@ -159,7 +144,7 @@ int main()
     shaderProgram.Delete();
 
     // Sets the viewport to the entire window size
-    glViewport(0, 0, 950, 950);
+    glViewport(0, 0, 1000, 1000);
 
     // Swaps the front and back buffers of the window
     glfwSwapBuffers(window);

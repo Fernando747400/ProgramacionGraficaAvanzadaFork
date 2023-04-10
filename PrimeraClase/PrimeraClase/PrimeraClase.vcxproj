@@ -162,6 +162,7 @@
     <Image Include="Madelein.jpg" />
     <Image Include="popCat.jpg" />
     <Image Include="Rubik.jpg" />
+    <Image Include="SadCat.jpg" />
     <Image Include="Wood.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

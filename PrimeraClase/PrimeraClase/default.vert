@@ -1,44 +1,39 @@
-// Sets the version of the GLSL language to be used
+// Declare the version of GLSL to use
 #version 330 core
 
-// Specifies the layout and location of input variables
-layout (location = 0) in vec3 aPos;        // Position
-layout (location = 1) in vec3 aColor;      // Color
-layout (location = 2) in vec2 aTex;        // Texture coordinates
-layout (location = 3) in vec3 aNormal;     // Normal vector
-layout (location = 4) in vec3 aTangent;    // Tangent vector
-layout (location = 5) in vec3 aBitangent;  // Bitangent vector
+// Specify the location of the vertex input "aPos"
+layout (location = 0) in vec3 aPos;
 
-// Declares output variables to be passed to the fragment shader
+// Specify the location of the vertex input "aColor"
+layout (location = 1) in vec3 aColor;
+
+// Specify the location of the vertex input "aTex"
+layout (location = 2) in vec2 aTex;
+
+// Declare a variable "color" to be outputted by the vertex shader
 out vec3 color;
-out vec2 texCoord;
-out vec3 T;
-out vec3 B;
-out vec3 N;
 
-// Declares a uniform variable (same value for all vertices)
+// Declare a variable "texCoord" to be outputted by the vertex shader
+out vec2 texCoord;
+
+// Declare a uniform variable "scale" of type float
 uniform float scale;
 
-// Function to calculate the TBN matrix based on the given normal, tangent, and bitangent vectors
-mat3 calcTBN(vec3 normal, vec3 tangent, vec3 bitangent)
-{
-    mat3 TBN = mat3(tangent, bitangent, normal);  // Constructs a matrix from the input vectors
-    return TBN;  // Returns the resulting TBN matrix
-}
+// Declare a uniform variable "offset" of type vec2
+uniform vec2 offset;
 
-// Main function of the vertex shader
 void main()
 {
-    // Calculates the position of the vertex by scaling the input position vector in all three dimensions
-    gl_Position = vec4(aPos.x + aPos.x * scale, aPos.y + aPos.y * scale, aPos.z + aPos.z * scale, 1.0);
-    // Passes the input color and texture coordinate to the fragment shader
-    color = aColor;
-    texCoord = aTex;
+	// Calculate the position of the vertex using the scale factor and the input position "aPos"
+	gl_Position = vec4(
+	aPos.x + aPos.x * scale,
+	aPos.y + aPos.y * scale,
+	aPos.z + aPos.z * scale, 1.0);
 
-    // Calculates the TBN matrix based on the input normal, tangent, and bitangent vectors
-    mat3 TBN = calcTBN(normalize(aNormal), normalize(aTangent), normalize(aBitangent));
-    // Extracts the tangent, bitangent, and normal vectors from the TBN matrix and passes them to the fragment shader
-    T = TBN[0];
-    B = TBN[1];
-    N = TBN[2];
+	// Output the input color "aColor" as "color"
+	color = aColor;
+
+	// Add the input texture coordinate "aTex" and the offset "offset" and output the result as "texCoord"
+	texCoord = aTex + offset;
 }
+
