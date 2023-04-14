@@ -109,15 +109,17 @@ int main()
     {
         glBindTexture(GL_TEXTURE_2D, texture);
         float timeValue = glfwGetTime();
+        std::cout << timeValue << std::endl;
 
-        // Set the value of the uniform float for time using glUniform1f or similar
-        glUniform1f(timeUni, timeValue);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1);
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Dibujar la geometría con la textura animada con ruido de Perlin aplicado
         shaderProgram.Activate();
+
+        // Set the value of the uniform float for time using glUniform1f or similar
+        glUniform1f(timeUni, timeValue);
         glUniform1f(uniID, 0.5f);
         VAO1.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

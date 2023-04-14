@@ -45,7 +45,7 @@ void main()
     vec2 modifiedTexCoord = texCoord;
 
     // Generate improved Perlin noise at the modified texture coordinate and time, and scale the result
-    float noiseValue = perlinNoise(modifiedTexCoord + vec2(time * 0.1, time * 0.2), time) * 0.1f;
+    float noiseValue = perlinNoise(modifiedTexCoord + vec2(time * 0.2, time * 0.3), time) * 0.5f * time;
 
     // Modify the texture coordinates by adding the Perlin noise value
     modifiedTexCoord += vec2(noiseValue);
